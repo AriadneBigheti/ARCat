@@ -17,9 +17,10 @@ class CustomARView: ARView{
     var sceneObserver: Cancellable?
     var playButtonObserver: AnyCancellable?
     var exploreButtonObserver: AnyCancellable?
+    var tapObserver: AnyCancellable?
     var anchor = AnchorEntity(plane: .horizontal)
     var isAnchorActivaded = false
-
+    private var selectedNode: SCNNode? = nil
     
     required init(frame: CGRect) {
         super.init(frame: frame)
@@ -27,6 +28,8 @@ class CustomARView: ARView{
         focusEntity = FocusEntity(on: self, focus: .classic)
         model = Cat(view: self)
         checkAnchorState()
+        
+        self.addGestureRecognizer(UITapGestureRecognizer(target: self, action:#selector(handleTap(_:))))
 
     }
     
@@ -51,11 +54,10 @@ class CustomARView: ARView{
             config.frameSemantics.insert(.personSegmentationWithDepth)
        }
         
-       //config.sceneReconstruction = .meshWithClassification
-       config.planeDetection = [.horizontal]
+       config.sceneReconstruction = .meshWithClassification
+       config.planeDetection = .horizontal
        self.debugOptions.insert(.showSceneUnderstanding)
        self.session.run(config)
-        
     }
     
     func placeModel(_ model: Entity){
@@ -70,4 +72,14 @@ class CustomARView: ARView{
         }
     }
     
+    @objc
+    func handleTap(_ sender: UITapGestureRecognizer) {
+            
+        let tapLocation = sender.location(in: self)
+        if let result = self.raycast(from: tapLocation, allowing: .estimatedPlane, alignment: .any).first {
+            let resultAnchor = AnchorEntity(world: result.worldTransform)
+            resultAnchor.addChild((model?.modelEntity)!)
+            self.scene.addAnchor(resultAnchor)
+        }
+    }
 }

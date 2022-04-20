@@ -7,13 +7,18 @@
 
 import RealityKit
 import Combine
+import SwiftUI
+import ARKit
+import UIKit
 
 class Cat{
     var modelEntity: Entity?
     var scaleCompensation: Float
+    var arView: CustomARView
     
     init(view: CustomARView){
         self.scaleCompensation = 2
+        self.arView = view
         asyncloadModel(arView: view)
     }
     
@@ -59,6 +64,10 @@ class Cat{
     
     func explore(){
         print("exploring")
+    }
+    
+    func exploreNode(){
+        print("node touched")
     }
     
     func playFun(){

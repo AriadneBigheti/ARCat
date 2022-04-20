@@ -41,7 +41,6 @@ struct ARViewContainer: UIViewRepresentable{
         
         arView.playButtonObserver = interactionSettings.$didTapPlayButton.sink(receiveValue: { value in
             arView.model?.playFun()
-
         })
      
         arView.exploreButtonObserver = interactionSettings.$didTapExploreButton.sink(receiveValue: { value in
@@ -54,7 +53,7 @@ struct ARViewContainer: UIViewRepresentable{
     func updateUIView(_ uiView: CustomARView, context: Context) {
     
     }
-        
+         
     private func updateScene(for arView: CustomARView){
         placementSettings.isAnchorActivaded = arView.isAnchorActivaded
         
