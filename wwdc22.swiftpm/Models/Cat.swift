@@ -13,7 +13,7 @@ class Cat{
     var scaleCompensation: Float
     
     init(view: CustomARView){
-        self.scaleCompensation = 0.85
+        self.scaleCompensation = 2
         asyncloadModel(arView: view)
     }
     
@@ -33,7 +33,8 @@ class Cat{
                 
                 self.modelEntity = modelEntity.clone(recursive: true)
                 self.modelEntity?.generateCollisionShapes(recursive: true)
-
+                self.modelEntity?.scale = .init(repeating: FocusEntity.size*4)
+                
                 print("loaded model")
                 
                 cancellable?.cancel()
@@ -43,18 +44,25 @@ class Cat{
     
     func animate(){
         let animations = self.modelEntity?.availableAnimations
-        for animation in animations! {
-            self.modelEntity?.playAnimation(animation.repeat(duration: .infinity), transitionDuration: 0.5, startsPaused: false)
+        self.modelEntity?.playAnimation(animations![0].repeat(duration: .infinity), transitionDuration: 0, startsPaused: false)
                 print("animation is playing")
-        }
+        
     }
     
     func moveCat(){
         var modelTransform = self.modelEntity?.transform
-        modelTransform?.translation = [0, 0, 0.5]
-        modelEntity?.move(to: modelTransform!, relativeTo: modelEntity?.parent, duration: 1, timingFunction: .easeInOut)
+        modelTransform?.translation = [0, 0, 0.3]
         animate()
+        modelEntity?.move(to: modelTransform!, relativeTo: modelEntity?.parent, duration: 0.5, timingFunction: .easeInOut)
         
+    }
+    
+    func explore(){
+        print("exploring")
+    }
+    
+    func playFun(){
+        print("playing")
     }
     
     func place(in arView: CustomARView){

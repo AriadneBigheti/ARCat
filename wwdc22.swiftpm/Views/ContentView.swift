@@ -5,15 +5,22 @@ import Combine
 
 struct ARContentView: View {
     @StateObject var placementSettings = PlacementSettings()
-    
+    @StateObject var interactionSettings = InteractionSettings()
+
     var body: some View {
         ZStack(alignment: .bottom){
             ARViewContainer()
+                .environmentObject(placementSettings)
+                .environmentObject(interactionSettings)
             if !placementSettings.didTapButton && placementSettings.isAnchorActivaded{
                 PlacementView()
+                    .environmentObject(placementSettings)
+            }else if placementSettings.modelIsPlaced{
+                InteractionsView()
+                    .environmentObject(interactionSettings)
             }
         }
-        .environmentObject(placementSettings)
+
         .edgesIgnoringSafeArea(.all)
         .statusBar(hidden: true)
         .navigationBarHidden(true)
@@ -22,33 +29,43 @@ struct ARContentView: View {
 
 struct ARViewContainer: UIViewRepresentable{
     @EnvironmentObject var placementSettings: PlacementSettings
-    
+    @EnvironmentObject var interactionSettings: InteractionSettings
+
     func makeUIView(context: Context) -> CustomARView {
         let arView = CustomARView(frame: .zero)
-    
+
         arView.sceneObserver = arView.scene.subscribe(to: SceneEvents.Update.self,
         { (event) in
-            placementSettings.isAnchorActivaded = arView.isAnchorActivaded
             updateScene(for: arView)
         })
         
+        arView.playButtonObserver = interactionSettings.$didTapPlayButton.sink(receiveValue: { value in
+            arView.model?.playFun()
+
+        })
+     
+        arView.exploreButtonObserver = interactionSettings.$didTapExploreButton.sink(receiveValue: { value in
+            arView.model?.explore()
+        })
+                
         return arView
     }
     
     func updateUIView(_ uiView: CustomARView, context: Context) {
+    
     }
         
     private func updateScene(for arView: CustomARView){
-        arView.focusEntity?.isEnabled = !arView.box!.isPlaced
-
+        placementSettings.isAnchorActivaded = arView.isAnchorActivaded
+        
         if placementSettings.shouldAddModel{
-            arView.box?.place(in: arView)
-            arView.generateOcclusionBox()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                arView.box?.rotateBox()
-                arView.placeCat()
-            }
+            arView.placeCat()
+            placementSettings.modelIsPlaced = true
             placementSettings.shouldAddModel = false
+            arView.focusEntity?.isEnabled = false
+            arView.sceneObserver?.cancel()
+        }else{
+            arView.focusEntity?.isEnabled = true
         }
     }
     

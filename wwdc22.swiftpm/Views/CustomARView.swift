@@ -13,20 +13,21 @@ import SwiftUI
 class CustomARView: ARView{
     var focusEntity: FocusEntity?
     var model: Cat?
-    var box: Box?
-    var cancellables = Set<AnyCancellable>()
+    private var cancellables = Set<AnyCancellable>()
     var sceneObserver: Cancellable?
+    var playButtonObserver: AnyCancellable?
+    var exploreButtonObserver: AnyCancellable?
     var anchor = AnchorEntity(plane: .horizontal)
     var isAnchorActivaded = false
-    var occlusionBox: ModelEntity?
+
     
     required init(frame: CGRect) {
         super.init(frame: frame)
         configure()
         focusEntity = FocusEntity(on: self, focus: .classic)
         model = Cat(view: self)
-        box = Box(view: self)
         checkAnchorState()
+
     }
     
     @MainActor required dynamic init?(coder decoder: NSCoder) {
@@ -35,8 +36,7 @@ class CustomARView: ARView{
     
     private func checkAnchorState(){
         self.scene.subscribe(to: SceneEvents.AnchoredStateChanged.self) { [self] (event) in
-            if (((focusEntity?.anchor?.isActive)) != nil) {
-                print("anchor is activaded")
+            if ((focusEntity?.isAnchored) != nil){
                 self.isAnchorActivaded = true
             }else{
                 self.isAnchorActivaded = false
@@ -66,26 +66,8 @@ class CustomARView: ARView{
     func placeCat(){
         if let modelEntity = model?.modelEntity{
             placeModel(modelEntity)
-            animateCat()
+            self.model?.animate()
         }
-    }
-    
-    func animateCat(){
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.model?.moveCat()
-        }
-    }
-   
-    func generateOcclusionBox(){
-        let material = OcclusionMaterial()
-        let boxSize: Float = 1
-        let occlusionBoxMesh = MeshResource.generateBox(size: boxSize)
-        self.occlusionBox = ModelEntity(mesh: occlusionBoxMesh, materials: [material])
-       
-        self.occlusionBox?.position.z = -1
-        
-        anchor.addChild(self.occlusionBox!)
-        
     }
     
 }
