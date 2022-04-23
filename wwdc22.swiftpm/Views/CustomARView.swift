@@ -86,10 +86,6 @@ class CustomARView: ARView{
                     let resultAnchor = AnchorEntity(world: result.worldTransform)
                     resultAnchor.addChild(cat)
                     self.scene.addAnchor(resultAnchor)
-                    if let component: BallonComponent = cat.components[BallonComponent.self]{
-                        //animate
-                        print("animation is running")
-                    }
                 }
             }
         }else{

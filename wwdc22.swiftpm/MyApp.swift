@@ -2,6 +2,7 @@ import SwiftUI
 
 @main
 struct MyApp: App {
+    @State var startARExperience = false
     
     init(){
         let craftyGirls = Bundle.main.url(forResource: "CraftyGirls-Regular", withExtension: "ttf")! as CFURL
@@ -10,7 +11,11 @@ struct MyApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ARContentView()
+            if startARExperience{
+                GameView()
+            }else{
+                StartView(startARExperience: $startARExperience)
+            }
         }
     }
 }

@@ -8,15 +8,15 @@ import PackageDescription
 import AppleProductTypes
 
 let package = Package(
-    name: "wwdc22",
+    name: "Kittens House",
     platforms: [
         .iOS("15.2")
     ],
     products: [
         .iOSApplication(
-            name: "wwdc22",
+            name: "Kittens House",
             targets: ["AppModule"],
-            bundleIdentifier: "com.wwdc22",
+            bundleIdentifier: "com.KittensHouse",
             teamIdentifier: "39L85C5Z46",
             displayVersion: "1.0",
             bundleVersion: "1",
@@ -28,8 +28,6 @@ let package = Package(
             ],
             supportedInterfaceOrientations: [
                 .portrait,
-                .landscapeRight,
-                .landscapeLeft,
                 .portraitUpsideDown(.when(deviceFamilies: [.pad]))
             ],
             capabilities: [

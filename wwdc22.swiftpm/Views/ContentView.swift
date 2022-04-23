@@ -11,7 +11,8 @@ struct ARContentView: View {
     
     var body: some View {
         ZStack(alignment: .top){
-            ARViewContainer(tutorialIndex: $tutorialIndex, exploreIsRunning: $exploreIsRunning, selectedCat: $selectedCat)                .edgesIgnoringSafeArea(.all)
+            ARViewContainer(tutorialIndex: $tutorialIndex, exploreIsRunning: $exploreIsRunning, selectedCat: $selectedCat)
+                .edgesIgnoringSafeArea(.all)
 //            Image("bg1")
 //                .resizable()
 //                .edgesIgnoringSafeArea(.all)
