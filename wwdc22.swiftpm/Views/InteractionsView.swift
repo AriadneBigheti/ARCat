@@ -7,22 +7,18 @@
 import SwiftUI
 
 struct InteractionsView: View {
-    @EnvironmentObject var interactionSettings: InteractionSettings
     
     var body: some View {
         HStack{
             Spacer()
-            InteractionButton(name: "Play", action: {
-                interactionSettings.didTapPlayButton = true
+            InteractionButton(name: "Story", action: {
             })
             Spacer()
             InteractionButton(name: "Explore", action: {
-                interactionSettings.didTapExploreButton = true
             })
-            Spacer()
         }
         .padding(.bottom, 30)
-        }
+    }
 }
 
 struct InteractionButton: View{
@@ -40,8 +36,3 @@ struct InteractionButton: View{
     }
 }
 
-struct InteractionsView_Previews: PreviewProvider {
-    static var previews: some View {
-        InteractionsView()
-    }
-}

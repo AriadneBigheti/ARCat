@@ -11,5 +11,5 @@ import Combine
 class InteractionSettings: ObservableObject {
     @Published var didTapPlayButton: Bool = false
     @Published var didTapExploreButton: Bool = false
-    
+    @Published var isSceneReconstructionActivated: Bool = false
 }

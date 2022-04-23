@@ -14,18 +14,25 @@ import UIKit
 class Cat{
     var modelEntity: Entity?
     var scaleCompensation: Float
+    var modelName: String
+    var scaleParameter = 0.17
+    var scale: Float
     var arView: CustomARView
-    
-    init(view: CustomARView){
-        self.scaleCompensation = 2
+    var ballonName: String
+   
+    init(view: CustomARView, name: String, scale: Float, ballonName: String){
+        self.scaleCompensation = scale
         self.arView = view
+        self.modelName = name
+        self.scale = scale
+        self.ballonName = ballonName
         asyncloadModel(arView: view)
     }
     
     func asyncloadModel(arView: CustomARView){
         var cancellable: AnyCancellable? = nil
         
-        cancellable = Entity.loadAsync(named: "Bengal")
+        cancellable = Entity.loadAsync(named: modelName)
             .sink(receiveCompletion: { error in
                 
                 print("Error: \(error)")
@@ -38,7 +45,9 @@ class Cat{
                 
                 self.modelEntity = modelEntity.clone(recursive: true)
                 self.modelEntity?.generateCollisionShapes(recursive: true)
-                self.modelEntity?.scale = .init(repeating: FocusEntity.size*4)
+                self.modelEntity?.scale = .init(repeating: Float(scaleParameter)*scale)
+                self.modelEntity?.name = modelName
+                self.modelEntity?.components[BallonComponent.self] = BallonComponent(view: arView, fileName: ballonName)
                 
                 print("loaded model")
                 
@@ -49,17 +58,10 @@ class Cat{
     
     func animate(){
         let animations = self.modelEntity?.availableAnimations
-        self.modelEntity?.playAnimation(animations![0].repeat(duration: .infinity), transitionDuration: 0, startsPaused: false)
-                print("animation is playing")
-        
-    }
-    
-    func moveCat(){
-        var modelTransform = self.modelEntity?.transform
-        modelTransform?.translation = [0, 0, 0.3]
-        animate()
-        modelEntity?.move(to: modelTransform!, relativeTo: modelEntity?.parent, duration: 0.5, timingFunction: .easeInOut)
-        
+        if animations?.count == 1{
+            self.modelEntity?.playAnimation(animations![0].repeat(duration: .infinity), transitionDuration: 0, startsPaused: false)
+                    print("animation is playing")
+        }
     }
     
     func explore(){
