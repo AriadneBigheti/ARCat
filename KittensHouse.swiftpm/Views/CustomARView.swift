@@ -28,7 +28,7 @@ class CustomARView: ARView{
         super.init(frame: frame)
         self.cats.append(Cat(view: self, name:"George", modelFile: "Persian", scale:5, ballonName: "persianBallon"))
         self.cats.append(Cat(view: self, name:"Lily", modelFile: "Kitten", scale:5, ballonName: "kittenBallon"))
-        self.cats.append(Cat(view: self, name:"Wolverine", modelFile: "Bengal", scale:5, ballonName: "bengalBallon"))
+       // self.cats.append(Cat(view: self, name:"Wolverine", modelFile: "Bengal", scale:5, ballonName: "bengalBallon"))
         self.cats.append(Cat(view: self, name:"Alaska", modelFile: "Norwegianforest", scale:5, ballonName: "norwegianforestBallon"))
     
         configure()
