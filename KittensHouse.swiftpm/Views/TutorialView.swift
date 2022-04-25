@@ -19,7 +19,7 @@ struct TutorialView: View{
 }
 
 struct TutorialBallon: View{
-    var texts: [String] = ["Tap in a horizontal surface to place your cats in the room.", "Tap in each cat to know more about it's history and personality.", "Do you want to explore the room with a kitten?  ", "Tap the cat to select him then tap the desired surface to fix the cat in it. Try to put it in seats, tables, walls..."]
+    var texts: [String] = ["Tap in a horizontal surface to place your cats in the room. Try to place them a few meters away from you.", "Tap in each cat to know more about it's history and personality.", "Do you want to explore the room with a kitten?  ", "Tap the cat to select him then tap the desired surface to fix the cat in it. Try to put it in seats, tables, walls..."]
     @Binding var index: Int
     @Binding var exploreisRunning: Bool
     @Binding var selectedCat: Entity?

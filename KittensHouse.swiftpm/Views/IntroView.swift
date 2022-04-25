@@ -11,15 +11,14 @@ struct IntroView: View{
     @Binding var startARExperience: Bool
     @Binding var index: Int
     
-    let texts = ["One sunny day you were passing down a road, coming back of your work....",
-                 "And you saw a big paper box by the road... You were curious to know what was inside that box. So you've decided to check it out.",
+    let texts = ["One sunny day you were passing down a road, coming back from your work....",
+                 "Suddenly you saw a big paper box by the road... You were curious to know what was inside that box. So you've decided to check it out.",
                  "The cutest kitten was inside the box and you couldn't let him there, all by himself. ",
-                 "So you've decided to take him home with you. It was time to adopt a cat.",
+                 "So you've decided to take him home. It was time to adopt a cat.",
                  "But in the next month, you found another cat and did the same thing...",
-                 "Also, in the next month.",
-                 "And in the next one....",
+                 "Also, in the next month...",
                  "Let's see how your house turned out!"]
-    let bgs = ["bg1", "bg2", "bg3", "bg4", "bg1", "bg1", "bg1", "bg1"]
+    let bgs = ["bg1", "bg2", "bg3", "bg4", "bg1", "bg1", "bg1"]
         
     var body: some View{
         ZStack(alignment: .top){

@@ -31,7 +31,6 @@ let package = Package(
                 .portraitUpsideDown(.when(deviceFamilies: [.pad]))
             ],
             capabilities: [
-                .fileAccess(.pictureFolder, mode: .readWrite),
                 .camera(purposeString: "To use Augmented Reality, this playground App needs access to your camera.")
             ]
         )

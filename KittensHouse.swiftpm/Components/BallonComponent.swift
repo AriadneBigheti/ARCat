@@ -45,7 +45,6 @@ class BallonComponent: Component{
     func place(in entity: Entity){
         if let model = self.modelEntity{
             model.position = entity.position
-            model.position.y -= 0.4
             entity.addChild(model)
         }
     }
