@@ -41,8 +41,7 @@ struct IntroView: View{
                         Image("nextButton")
                     }
                 }
-            }
-                .padding(EdgeInsets(top: 50, leading: 40, bottom: 50, trailing: 40))
+            }.padding(EdgeInsets(top: 50, leading: 40, bottom: 50, trailing: 40))
         }.navigationBarHidden(true)
     }
 }
@@ -59,10 +58,6 @@ struct IntroViewBallon: View{
                     .font(Font.custom("CraftyGirls-Regular", size: 30))
                     .foregroundColor(.black)
             }.padding(EdgeInsets(top: 40, leading: 40, bottom: 40, trailing: 40))
-
-
         }.background(RoundedRectangle(cornerRadius: 20).foregroundColor(.white))
-        
-
     }
 }

@@ -11,15 +11,13 @@ import Combine
 import SwiftUI
 
 class CustomARView: ARView{
-    var cats: [Cat] = [Cat]()
-    var index: Int = 0
+    private var cats: [Cat] = [Cat]()
+    private var catsPlaced: Int = 0
     private var cancellables = Set<AnyCancellable>()
-    var anchor = AnchorEntity(plane: .horizontal)
-    var isAnchorActivaded = false
-    var isSceneReconstructionActivated = false
-    @Binding var tutorialIndex: Int
-    @Binding var exploreIsRunning: Bool
-    @Binding var selectedCat: Entity?
+    private var anchor = AnchorEntity(plane: .horizontal)
+    @Binding private var tutorialIndex: Int
+    @Binding private var exploreIsRunning: Bool
+    @Binding private var selectedCat: Entity?
     
     init(frame: CGRect, tutorialIndex: Binding<Int>, exploreIsRunning: Binding<Bool>, selectedCat: Binding<Entity?>) {
         self._exploreIsRunning = exploreIsRunning
@@ -52,10 +50,8 @@ class CustomARView: ARView{
        }
        if ARWorldTrackingConfiguration.supportsSceneReconstruction(.meshWithClassification){
             config.sceneReconstruction = .meshWithClassification
-           self.isSceneReconstructionActivated = true
        }
        config.planeDetection = .horizontal
-     //  self.debugOptions.insert(.showSceneUnderstanding)
        self.session.run(config)
     }
     
@@ -63,71 +59,79 @@ class CustomARView: ARView{
         anchor.addChild(model)
         self.scene.addAnchor(anchor)
     }
-    
-    func placeCat(index:Int){
-        if let modelEntity = cats[index].modelEntity{
-            placeModel(modelEntity)
-            cats[index].animate()
-        }
-    }
-    
+
     @objc
-    func handleTap(_ sender: UITapGestureRecognizer) {
+    private func handleTap(_ sender: UITapGestureRecognizer) {
         let tapLocation = sender.location(in: self)
         
-        if exploreIsRunning{
-            removeAllBallons()
-            let entity = self.entity(at: tapLocation)
-            if let model = exploreHierarchy(entity: entity){
-                self.selectedCat = model
-            }else
-                if let cat = selectedCat{
-                if let result = self.raycast(from: tapLocation, allowing: .estimatedPlane, alignment: .any).first {
-                    let resultAnchor = AnchorEntity(world: result.worldTransform)
-                    resultAnchor.addChild(cat)
-                    self.scene.addAnchor(resultAnchor)
-                }
-            }
+        if exploreIsRunning{ //if the user choose to explore
+            explore(tapLocation: tapLocation)
         }else{
-            if index<=cats.count-1{
-                if let result = self.raycast(from: tapLocation, allowing: .estimatedPlane, alignment: .any).first {
-                    let resultAnchor = AnchorEntity(world: result.worldTransform)
-                    resultAnchor.addChild((cats[index].modelEntity)!)
-                    self.scene.addAnchor(resultAnchor)
-                    cats[index].animate()
-                    index+=1
-                }
-                if index == cats.count{
-                    tutorialIndex += 1
-                }
+            if catsPlaced<=cats.count-1{ // if not all cats were placed, place the next cat
+                placeNextCat(tapLocation: tapLocation)
             }
-            else{
-                removeAllBallons()
-                let entity = self.entity(at: tapLocation)
-                if let model = exploreHierarchy(entity: entity){
-                    if howManyBalllonsAppered() >= 1{
-                        if tutorialIndex<2{
-                            tutorialIndex+=1
-                        }
-                    }
-                    if let component: BallonComponent = model.components[BallonComponent.self]{
-                        print(model.name)
-                        print("tem componente")
-                        component.place(in: model)
-                        component.hasAppered = true
-                    }
-                }
+            else{ //if all cats were placed, and we are not exploring, place a ballon in the selected cat
+                placeBallon(tapLocation: tapLocation)
             }
         }
     }
-            
+          
+    private func placeNextCat(tapLocation: CGPoint){
+        let catIndex = catsPlaced
+        
+        if let result = self.raycast(from: tapLocation, allowing: .estimatedPlane, alignment: .any).first {
+            let resultAnchor = AnchorEntity(world: result.worldTransform)
+            resultAnchor.addChild((cats[catIndex].modelEntity)!)
+            self.scene.addAnchor(resultAnchor)
+            cats[catIndex].animate()
+            catsPlaced+=1
+        }
+        if catsPlaced == cats.count{ // if all cats were placed, go to the next tutorial instruction
+            tutorialIndex += 1
+        }
+    }
     
-    func exploreHierarchy(entity: Entity?) -> Entity? {
+    private func explore(tapLocation: CGPoint){
+        removeAllBallons()
+        
+        let entity = self.entity(at: tapLocation)
+        if let model = exploreHierarchy(entity: entity){ //if the user touches a cat entity, we change the state of selected cat
+            self.selectedCat = model
+        }
+        else // if the user doesn't tapped a cat, we change the anchor of the selected cat
+            if let cat = selectedCat{
+            if let result = self.raycast(from: tapLocation, allowing: .estimatedPlane, alignment: .any).first {
+                let resultAnchor = AnchorEntity(world: result.worldTransform)
+                resultAnchor.addChild(cat)
+                self.scene.addAnchor(resultAnchor)
+            }
+        }
+    }
+    
+    private func placeBallon(tapLocation: CGPoint){
+        removeAllBallons()
+        
+        let entity = self.entity(at: tapLocation)
+        if let model = exploreHierarchy(entity: entity){
+            if let component: BallonComponent = model.components[BallonComponent.self]{ //place a ballon on the cat that was touched
+                print(model.name)
+                component.place(in: model)
+            }
+        }
+        
+        if howManyBalllonsAppered() >= 1{ //if 2 ballons appeared, go the next tutorial instruction
+            if tutorialIndex<2{
+                tutorialIndex+=1
+            }
+        }
+    }
+    
+    private func exploreHierarchy(entity: Entity?) -> Entity? {
         
         if entity == nil {
             return nil
         }
-        if let entity = entity as? AnchorEntity {
+        if let entity = entity as? AnchorEntity {//the function runs into the most distant parent from the entity touched, wich has to be an Anchor Entity, the Anchor Entity should have only one child: the cat entity, which is the one we want
             if entity.children.count == 1{
                 return entity.children[0]
             }else{
@@ -139,7 +143,7 @@ class CustomARView: ARView{
         
     }
     
-    func howManyBalllonsAppered() -> Int{
+    private func howManyBalllonsAppered() -> Int{ // check how many ballons the user touched, in order to continue the instructions
         var i = 0
         
         for cat in cats{
@@ -155,10 +159,9 @@ class CustomARView: ARView{
         return i
     }
     
-    func removeAllBallons(){
+    private func removeAllBallons(){ //remove the ballons from all cats
         for cat in cats{
             if let component: BallonComponent = cat.modelEntity!.components[BallonComponent.self]{
-                print("tem componente")
                 component.remove()
             }
         }

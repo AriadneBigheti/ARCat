@@ -4,10 +4,10 @@ import ARKit
 import Combine
 
 struct ARContentView: View {
-   @State var entity: Entity? = nil
-   @State var tutorialIndex = 0
-   @State var exploreIsRunning: Bool = false
-   @State var selectedCat: Entity?
+   @State private var entity: Entity? = nil
+   @State private var tutorialIndex = 0
+   @State private var exploreIsRunning: Bool = false
+   @State private var selectedCat: Entity?
     
     var body: some View {
         ZStack(alignment: .top){

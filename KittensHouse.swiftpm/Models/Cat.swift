@@ -50,11 +50,8 @@ class Cat{
                 self.modelEntity?.scale = .init(repeating: Float(scaleParameter)*scale)
                 self.modelEntity?.name = modelName
                 self.modelEntity?.components[BallonComponent.self] = BallonComponent(view: arView, fileName: ballonName, scale: scale)
-                
-                print("loaded model")
-                
+                                
                 cancellable?.cancel()
-
             })
     }
     
@@ -62,20 +59,7 @@ class Cat{
         let animations = self.modelEntity?.availableAnimations
         if animations?.count == 1{
             self.modelEntity?.playAnimation(animations![0].repeat(duration: .infinity), transitionDuration: 0, startsPaused: false)
-                    print("animation is playing")
         }
-    }
-    
-    func explore(){
-        print("exploring")
-    }
-    
-    func exploreNode(){
-        print("node touched")
-    }
-    
-    func playFun(){
-        print("playing")
     }
     
     func place(in arView: CustomARView){

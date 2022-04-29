@@ -17,7 +17,6 @@ class BallonComponent: Component{
         self.fileName = fileName
         self.scale = scale
         asyncloadModel(arView: view)
-        
     }
     
     func asyncloadModel(arView: CustomARView){
@@ -34,11 +33,8 @@ class BallonComponent: Component{
                 modelEntity = model.clone(recursive: true)
                 modelEntity?.generateCollisionShapes(recursive: true)
                 modelEntity?.scale = .init(repeating: scale)
-
-                print("loaded model")
                 
                 cancellable?.cancel()
-
             })
     }
     
@@ -46,17 +42,11 @@ class BallonComponent: Component{
         if let model = self.modelEntity{
             model.position = entity.position
             entity.addChild(model)
+            self.hasAppered = true
         }
     }
     
     func remove(){
         modelEntity?.removeFromParent()
     }
-    
-    func animate(){
-        var modelTransform = self.modelEntity?.transform
-        modelTransform?.translation = [-2, 0, 0]
-        modelEntity?.move(to: modelTransform!, relativeTo: modelEntity?.parent, duration: 0.7, timingFunction: .easeInOut)
-    }
-         
 }
